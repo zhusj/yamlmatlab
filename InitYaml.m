@@ -20,8 +20,9 @@ function InitYaml()
         Auth  Date        Description of change
         ----  ---------   --------------------------------------------------
         jc    02-Mar-11   First implementation
+        jc    03-Mar-11   Fixed bug with initialization on windows machines
 %}
-%======================================================================
+%==========================================================================
 
 archive_name =   'snakeyaml-1.8.jar';
 package_path = ['external-packages' filesep 'snakeyaml'];
@@ -33,7 +34,7 @@ if isempty(strfind(javaclasspath,package_path))
     found = 0;
     [p, remain] = strtok(r,pathsep);
     while p
-        if not(isempty(regexp(p, package_path , 'ignorecase')))
+        if not(isempty(strfind(p, package_path )))
             javaaddpath([ p filesep archive_name ] );
             found = 1;
             break;
