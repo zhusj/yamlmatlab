@@ -26,6 +26,7 @@ function Data = Hash2Struct(hashMap)
         Auth  Date        Description of change
         ----  ---------   --------------------------------------------------
         jc    01-Mar-11   First implementation
+        jc    03-Mar-11   Arrays of struct support
 %}
 %======================================================================
 
@@ -35,7 +36,7 @@ iterator = hashMap.keySet().iterator();
 while (iterator.hasNext())
     field = iterator.next();
     if ~isempty(field)
-        d =  hashMap.get(field);
+        d =  hashMap.get(java.lang.String(field));
         switch class(d)
             case {'java.util.LinkedHashMap'}
                 Data.(field) = Hash2Struct(d);
@@ -67,6 +68,12 @@ while (iterator.hasNext())
                         if all(cellfun(@(x) isnumeric(x),val))
                             val = cell2mat(val);
                         end
+                    case {'java.util.LinkedHashMap'}
+                        for hh=0:(d.size-1)
+                            hm=d.get(hh);                            
+                            Data.(field)(hh+1)=Hash2Struct(hm);
+                        end
+                        continue;
                         
                     otherwise
                         error('unknown  java datatype');
