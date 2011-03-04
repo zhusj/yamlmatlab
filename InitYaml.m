@@ -49,7 +49,7 @@ end
 
 % character encoding setup
 
-if strcmp(feature('DefaultCharacterSet'),'UTF-8')
+if not(strcmp(feature('DefaultCharacterSet'),'UTF-8'))
     slCharacterEncoding('UTF-8');
 end
 
