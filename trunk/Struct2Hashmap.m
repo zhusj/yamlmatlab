@@ -1,4 +1,4 @@
-function hmap = Struct2Hashmap(S)
+function ArrList = Struct2Hashmap(S)
 % This function converts matla struct to java object of type
 % java.util.HashMap.
 % Inputs:
@@ -16,7 +16,7 @@ function hmap = Struct2Hashmap(S)
         is included in the program release.
 		
         Author(s):
-		Jiri Cigler, Dept. of Control Engineering, CTU Prague 
+		Jiri Cigler, Dept. of Control Engineering, CTU Prague
 		Jan  Siroky, Energocentrum PLUS s.r.o.
 		
         Implementation and Revisions:
@@ -27,45 +27,55 @@ function hmap = Struct2Hashmap(S)
 %}
 %======================================================================
 
-if ((~isstruct(S)) || (numel(S) ~= 1))
+if ((~isstruct(S)))
     error('struct2hashmap:invalid','%s',...
-        'struct2hashmap only accepts single structures');
+        'struct2hashmap only accepts structures');
 end
+ArrList = java.util.ArrayList;
 
-hmap = java.util.LinkedHashMap;
-for fn = fieldnames(S)'
-    % fn iterates through the field names of S
-    % fn is a 1x1 cell array
-    fn = fn{1};
-    val = getfield(S,fn);
-    if isstruct(val)
-        val=Struct2Hashmap(val);
-    end
+for n=1:numel(S)
     
-    %todo check matrices, and cells
-    vn = java.util.ArrayList();
-    if not(isscalar(val)) && not(ischar(val)) && not(strcmp(class(val),'java.util.LinkedHashMap')) && not(iscell(val))
-        if not(isscalar(val)) && isnumeric(val) % numeric
-            if size(val,1)==1 % one row
-                arrayfun(@(x)vn.add(x),val);
-            else
-                for i=1:size(val,1)
-                    vnr = java.util.ArrayList();
-                    arrayfun(@(x)vnr.add(x),val(i,:));
-                    vn.add(vnr);
-                end
-            end
-        elseif iscell(val)
-            %if size(val,1)>size(val,2)
-            %    val=val';
-            %end
-            cellfun(@(x)vn.add(x),val);
-        else
-            error('Unknown data type');
+    hmap = java.util.LinkedHashMap;
+    for fn = fieldnames(S)'
+        % fn iterates through the field names of S
+        % fn is a 1x1 cell array
+        
+        val = getfield(S(n),fn{1});
+        if isstruct(val)
+            val=Struct2Hashmap(val);
         end
-        val = vn;
+        
+        %todo check matrices, and cells
+        vn = java.util.ArrayList();
+        %if not(isscalar(val)) && not(ischar(val)) && not(strcmp(class(val),'java.util.LinkedHashMap')) && not(iscell(val))
+        if not(isscalar(val)) && not(ischar(val)) && not(strcmp(class(val),'java.util.LinkedHashMap') || strcmp(class(val),'java.util.ArrayList')) && not(iscell(val))
+            if not(isscalar(val)) && isnumeric(val) % numeric
+                if size(val,1)==1 % one row
+                    arrayfun(@(x)vn.add(x),val);
+                else
+                    for i=1:size(val,1)
+                        vnr = java.util.ArrayList();
+                        arrayfun(@(x)vnr.add(x),val(i,:));
+                        vn.add(vnr);
+                    end
+                end
+            elseif iscell(val)
+                %if size(val,1)>size(val,2)
+                %    val=val';
+                %end
+                cellfun(@(x)vn.add(x),val);
+            else
+                error('Unknown data type');
+            end
+            val = vn;
+        end
+        
+        hmap.put(fn{1},val);
     end
-    
-    hmap.put(fn,val);
+    if numel(S)>1
+        ArrList.add(hmap);
+    else
+        ArrList=hmap;
+    end
 end
 end
