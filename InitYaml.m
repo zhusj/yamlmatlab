@@ -21,6 +21,7 @@ function InitYaml()
         ----  ---------   --------------------------------------------------
         jc    02-Mar-11   First implementation
         jc    03-Mar-11   Fixed bug with initialization on windows machines
+        jc    04-Mar-11   Added character encoding check (in order to set UTF-8)
 %}
 %==========================================================================
 
@@ -45,5 +46,12 @@ if isempty(strfind(javaclasspath,package_path))
         error('YAMLMatlab:init:failed','YAMLMatlab initialization failed')
     end
 end
+
+% character encoding setup
+
+if strcmp(feature('DefaultCharacterSet'),'UTF-8')
+    slCharacterEncoding('UTF-8');
+end
+
 
 end
