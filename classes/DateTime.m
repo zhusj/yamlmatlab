@@ -63,12 +63,17 @@ classdef DateTime
         
         
         
-        function this = horzcat(this,n)
-            this.serialDate = [this.serialDate, n.serialDate];
+        function this = horzcat(this,varargin)
+            %this.serialDate = [this.serialDate, n.serialDate];
+            for i=1:numel(varargin)
+                this.serialDate = [this.serialDate, varargin{i}.serialDate];
+            end
         end
         
-        function this = vertcat(this,n)
-            this.serialDate = [this.serialDate; n.serialDate];
+        function this = vertcat(this,varargin)
+            for i=1:numel(varargin)
+                this.serialDate = [this.serialDate; varargin{i}.serialDate];
+            end
         end
         
         
