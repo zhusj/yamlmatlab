@@ -42,11 +42,14 @@ while (iterator.hasNext())
                 Data.(field) = Hash2Struct(d);
             case {'java.util.ArrayList'}
                 switch class(d.get(0))
-                    case {'char' ,'double'}
+                    case {'char' ,'double','java.util.Date'}
                         it = d.iterator();
                         val={};
                         while (it.hasNext())
                             val(end+1)={it.next()};
+                            if isa(val{end},'java.util.Date')
+                                val{end} = DateTime(val{end});
+                            end
                         end
                         if all(cellfun(@(x) isnumeric(x),val))
                             val = cell2mat(val);
@@ -61,6 +64,9 @@ while (iterator.hasNext())
                             c=1;
                             while(itc.hasNext())
                                 val{r,c}=itc.next();
+                                if isa(val{r,c},'java.util.Date')
+                                    val{r,c} = DateTime(val{r,c});
+                                end
                                 c=c+1;
                             end
                             r=r+1;
