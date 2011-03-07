@@ -24,6 +24,7 @@ function ArrList = Struct2Hashmap(S)
         Auth  Date        Description of change
         ----  ---------   --------------------------------------------------
         jc    01-Mar-11   First implementation
+        jc    07-Mar-11   Support for date time and cell arrays nxm
 %}
 %======================================================================
 
@@ -47,8 +48,7 @@ for n=1:numel(S)
         
         %todo check matrices, and cells
         vn = java.util.ArrayList();
-        %if not(isscalar(val)) && not(ischar(val)) && not(strcmp(class(val),'java.util.LinkedHashMap')) && not(iscell(val))
-        if not(isscalar(val)) && not(ischar(val)) && not(strcmp(class(val),'java.util.LinkedHashMap') || strcmp(class(val),'java.util.ArrayList')) && not(iscell(val))
+        if not(isscalar(val)) && not(ischar(val)) && not(isa(val,'java.util.LinkedHashMap')) || isa(val,'java.util.ArrayList')
             if not(isscalar(val)) && isnumeric(val) % numeric
                 if size(val,1)==1 % one row
                     arrayfun(@(x)vn.add(x),val);
@@ -60,10 +60,16 @@ for n=1:numel(S)
                     end
                 end
             elseif iscell(val)
-                %if size(val,1)>size(val,2)
-                %    val=val';
-                %end
-                cellfun(@(x)vn.add(x),val);
+                if size(val,1)==1 % one row                    
+                    cellfun(@(x)vn.add(JavaObjType(x)),val);
+                else
+                    for i=1:size(val,1)
+                        vnr = java.util.ArrayList();
+                        cellfun(@(x)vnr.add(JavaObjType(x)),val(i,:));
+                        vn.add(vnr);
+                    end
+                end              
+                
             else
                 error('Unknown data type');
             end
@@ -77,5 +83,12 @@ for n=1:numel(S)
     else
         ArrList=hmap;
     end
+end
+end
+function outDataFormat=JavaObjType(x)
+if isa(x,'DateTime')
+    outDataFormat=java.util.Date(datestr(x));
+else
+    outDataFormat=x;
 end
 end
