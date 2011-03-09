@@ -27,6 +27,7 @@ function Data = Hash2Struct(hashMap)
         ----  ---------   --------------------------------------------------
         jc    01-Mar-11   First implementation
         jc    03-Mar-11   Arrays of struct support
+        jc    09-Mar-11   DateTime support extended
 %}
 %======================================================================
 
@@ -84,8 +85,13 @@ while (iterator.hasNext())
                     otherwise
                         error('unknown  java datatype');
                 end
+                
+                
                 Data.(field) = val;
-            otherwise
+            otherwise                
+                if isa(d,'java.util.Date')
+                    d = DateTime(d);
+                end
                 Data.(field) = d;
         end
     end
