@@ -1,10 +1,6 @@
-function WriteYaml(yaml_file,matlab_struct)
-% This function writers struct into Yaml file
-% Example
-% >> yaml_file_old = 'EnaspolMain.yaml';
-% >> yaml_file_new = 'EnaspolMain.yaml';
-% >> YamlStruct = ReadYaml(yaml_file_old)
-% >> WriteYaml(yaml_file_new,YamlStruct)
+function str = EncodeUnicode(orig_utf)
+% This function encodes unicode characters into default character set
+% orig_utf .. char
 
 %======================================================================
 %{
@@ -23,34 +19,15 @@ function WriteYaml(yaml_file,matlab_struct)
 
         Auth  Date        Description of change
         ----  ---------   --------------------------------------------------
-        jc    01-Mar-11   First implementation
-        jc    02-Mar-11   .jar package initialization moved to external fun
+        jc    15-Mar-11   First implementation
 
 %}
 %======================================================================
 
-InitYaml();
+import java.lang.String
 
-import('org.yaml.snakeyaml.Yaml');
+string=String(orig_utf);
 
-yaml = Yaml();
-
-Data = Struct2Hashmap(matlab_struct);
-
-output = yaml.dump(Data);
-fid = fopen(yaml_file,'w');
-fprintf(fid,'%s',char(output) );
-fclose(fid);
-
+str = char(String(string.getBytes('UTF-8'),feature('DefaultCharacterSet')));
 
 end % end of function
-
-
-
-
-
-
-
-
-
-

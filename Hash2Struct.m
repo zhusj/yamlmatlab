@@ -28,6 +28,7 @@ function Data = Hash2Struct(hashMap)
         jc    01-Mar-11   First implementation
         jc    03-Mar-11   Arrays of struct support
         jc    09-Mar-11   DateTime support extended
+        jc    15-Mar-11   Support for different encodings
 %}
 %======================================================================
 
@@ -51,6 +52,9 @@ while (iterator.hasNext())
                             if isa(val{end},'java.util.Date')
                                 val{end} = DateTime(val{end});
                             end
+                            if ischar(val{end})
+                                val{end} = DecodeUnicode(val{end});                                
+                            end
                         end
                         if all(cellfun(@(x) isnumeric(x),val))
                             val = cell2mat(val);
@@ -67,6 +71,9 @@ while (iterator.hasNext())
                                 val{r,c}=itc.next();
                                 if isa(val{r,c},'java.util.Date')
                                     val{r,c} = DateTime(val{r,c});
+                                end
+                                if ischar(val{r,c})
+                                    val{r,c} = DecodeUnicode(val{r,c});                                
                                 end
                                 c=c+1;
                             end
@@ -91,6 +98,9 @@ while (iterator.hasNext())
             otherwise                
                 if isa(d,'java.util.Date')
                     d = DateTime(d);
+                end
+                if ischar(d)
+                    d = DecodeUnicode(d);
                 end
                 Data.(field) = d;
         end

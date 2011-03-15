@@ -76,7 +76,7 @@ for n=1:numel(S)
             val = vn;
         end
         
-        hmap.put(fn{1},val);
+        hmap.put(fn{1},JavaObjType(val));
     end
     if numel(S)>1
         ArrList.add(hmap);
@@ -87,7 +87,9 @@ end
 end
 function outDataFormat=JavaObjType(x)
 if isa(x,'DateTime')
-    outDataFormat=java.util.Date(datestr(x));
+    outDataFormat=java.util.Date(datestr(x));    
+elseif ischar(x)
+    outDataFormat = EncodeUnicode(x);
 else
     outDataFormat=x;
 end
