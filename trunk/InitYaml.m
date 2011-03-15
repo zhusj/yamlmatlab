@@ -47,11 +47,5 @@ if isempty(strfind(javaclasspath,package_path))
     end
 end
 
-% character encoding setup
-
-if not(strcmp(feature('DefaultCharacterSet'),'UTF-8'))
-    slCharacterEncoding('UTF-8');
-end
-
 
 end
