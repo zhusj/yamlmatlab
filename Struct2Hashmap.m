@@ -46,7 +46,6 @@ for n=1:numel(S)
             val=Struct2Hashmap(val);
         end
         
-        %todo check matrices, and cells
         vn = java.util.ArrayList();
         if not(isscalar(val)) && not(ischar(val)) && not(isa(val,'java.util.LinkedHashMap')) || isa(val,'java.util.ArrayList')
             if not(isscalar(val)) && isnumeric(val) % numeric
