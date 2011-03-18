@@ -42,9 +42,7 @@ fid = fopen(yaml_file,'w');
 fprintf(fid,'%s',char(output) );
 fclose(fid);
 
-
 end % end of function
-
 
 
 
