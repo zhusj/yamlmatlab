@@ -93,8 +93,9 @@ classdef DateTime
         function out = length(this)
             out = length(this.serialDate);
         end
-        function out = size(this)
-            out = size(this.serialDate);
+        
+        function out = size(this,varargin)
+            out = size(this.serialDate,varargin{:});
         end
         
         function out = numel(this)
