@@ -25,68 +25,72 @@ function ArrList = Struct2Hashmap(S)
         ----  ---------   --------------------------------------------------
         jc    01-Mar-11   First implementation
         jc    07-Mar-11   Support for date time and cell arrays nxm
+        jc    08-May-11   Support for yaml write of cell of structs
 %}
 %======================================================================
 
-if ((~isstruct(S)))
-    error('struct2hashmap:invalid','%s',...
-        'struct2hashmap only accepts structures');
-end
+
 ArrList = java.util.ArrayList;
 
 for n=1:numel(S)
-    
-    hmap = java.util.LinkedHashMap;
-    for fn = fieldnames(S)'
-        % fn iterates through the field names of S
-        % fn is a 1x1 cell array
-        
-        val = getfield(S(n),fn{1});
-        if isstruct(val)
-            val=Struct2Hashmap(val);
-        end
-        
-        vn = java.util.ArrayList();
-        if not(isscalar(val)) && not(ischar(val)) && not(isa(val,'java.util.LinkedHashMap')) || isa(val,'java.util.ArrayList')
-            if not(isscalar(val)) && isnumeric(val) % numeric
-                if size(val,1)==1 % one row
-                    arrayfun(@(x)vn.add(x),val);
-                else
-                    for i=1:size(val,1)
-                        vnr = java.util.ArrayList();
-                        arrayfun(@(x)vnr.add(x),val(i,:));
-                        vn.add(vnr);
-                    end
-                end
-            elseif iscell(val)
-                if size(val,1)==1 % one row                    
-                    cellfun(@(x)vn.add(JavaObjType(x)),val);
-                else
-                    for i=1:size(val,1)
-                        vnr = java.util.ArrayList();
-                        cellfun(@(x)vnr.add(JavaObjType(x)),val(i,:));
-                        vn.add(vnr);
-                    end
-                end              
-                
-            else
-                error('Unknown data type');
-            end
-            val = vn;
-        end
-        
-        hmap.put(fn{1},JavaObjType(val));
-    end
-    if numel(S)>1
-        ArrList.add(hmap);
+    if iscell(S)
+        ArrList.add(Struct2Hashmap(S{n}));
     else
-        ArrList=hmap;
+        
+        hmap = java.util.LinkedHashMap;
+        for fn = fieldnames(S)'
+            % fn iterates through the field names of S
+            % fn is a 1x1 cell array
+            
+            val = getfield(S(n),fn{1});
+            if isstruct(val)
+                val=Struct2Hashmap(val);
+            end
+            
+            vn = java.util.ArrayList();
+            if not(isscalar(val)) && not(ischar(val)) && not(isa(val,'java.util.LinkedHashMap')) || isa(val,'java.util.ArrayList')
+                if not(isscalar(val)) && isnumeric(val) % numeric
+                    if size(val,1)==1 % one row
+                        arrayfun(@(x)vn.add(x),val);
+                    else
+                        for i=1:size(val,1)
+                            vnr = java.util.ArrayList();
+                            arrayfun(@(x)vnr.add(x),val(i,:));
+                            vn.add(vnr);
+                        end
+                    end
+                elseif iscell(val)
+                    if size(val,1)==1 % one row
+                        cellfun(@(x)vn.add(JavaObjType(x)),val);
+                    else
+                        for i=1:size(val,1)
+                            vnr = java.util.ArrayList();
+                            cellfun(@(x)vnr.add(JavaObjType(x)),val(i,:));
+                            vn.add(vnr);
+                        end
+                    end
+                    
+                else
+                    error('Unknown data type');
+                end
+                val = vn;
+            end
+            
+            hmap.put(fn{1},JavaObjType(val));
+        end
+        if numel(S)>1
+            ArrList.add(hmap);
+        else
+            ArrList=hmap;
+        end
     end
 end
 end
 function outDataFormat=JavaObjType(x)
 if isa(x,'DateTime')
-    outDataFormat=java.util.Date(datestr(x));    
+    outDataFormat=java.util.Date(datestr(x));
+elseif isstruct(x)
+    outDataFormat=Struct2Hashmap(x);
 elseif ischar(x)
     outDataFormat = EncodeUnicode(x);
 else
