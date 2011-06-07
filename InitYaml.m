@@ -22,6 +22,7 @@ function InitYaml()
         jc    02-Mar-11   First implementation
         jc    03-Mar-11   Fixed bug with initialization on windows machines
         jc    04-Mar-11   Added character encoding check (in order to set UTF-8)
+        jc    07-Jun-11   Fixed bug when more jar archives were already in path
 %}
 %==========================================================================
 
@@ -29,7 +30,7 @@ archive_name =   'snakeyaml-1.8.jar';
 package_path = ['external-packages' filesep 'snakeyaml'];
 % add .jar to dynamic path
 
-if isempty(strfind(javaclasspath,package_path))
+if not(any(cellfun(@(x)not(isempty(strfind(x,package_path))),javaclasspath)))
     r = matlabpath;
     tokens = strtok(r,pathsep);
     found = 0;
