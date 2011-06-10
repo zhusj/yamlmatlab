@@ -26,6 +26,7 @@ function YamlStruct = ReadYaml(yaml_file)
         jc    18-Mar-11   Warning added when imported file not found
         jc    07-Jun-11   Ability to merge structures
         jc    09-Jun-11   Merging of structures recursively
+        jc    10-Jun-11   Better reporting of parse errors
 %}
 %======================================================================
 
@@ -41,13 +42,8 @@ work_folder=fileparts(yaml_file);
 if isfield(Data,'import')    
     for i=1:numel(Data.import)
         fToImport=[work_folder filesep Data.import{i}];
-        
-        try            
-            s = ReplaceImportByStruct(fToImport);
-            Data = mergeStructs(Data,s);
-        catch
-            warning('YAMLMatlab:FileNotFoundException','YAMLMatlab: File %s not found',fToImport);
-        end        
+        s = ReplaceImportByStruct(fToImport);
+        Data = mergeStructs(Data,s);        
     end
     %jymlobj = yamlreader.load(yml);
     %YamlStruct = Hash2Struct(jymlobj);
@@ -56,9 +52,17 @@ else
     YamlStruct =Data;
 end
     function s = ReplaceImportByStruct(fname)
-        yml_file = fileread(fname);
-        ymlobj = yamlreader.load(yml_file);
-
+        try
+            yml_file = fileread(fname);
+        catch
+            error('YAMLMatlab:FileNotFoundException','YAMLMatlab: File %s not found',fToImport);
+        end
+        try
+            ymlobj = yamlreader.load(yml_file);
+        catch            
+            error('YAMLMatlab:ParseError',['File: ' fname ', parse error:' lasterr]);
+        end
+        
         s = Hash2Struct(ymlobj);
     end % end of ReplaceImportByStruct
 
