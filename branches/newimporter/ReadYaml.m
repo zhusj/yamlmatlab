@@ -145,7 +145,7 @@ function result = perform_import(r)
     if iscell(r) && all(cellfun(@ischar, r))
         result = cellfun(@load_yaml, r, 'UniformOutput', 0);
     elseif ischar(r)
-        result = load_yaml(r);
+        result = {load_yaml(r)};
     else
         disp(r);
         error(['Importer does not unterstand given filename. '...
