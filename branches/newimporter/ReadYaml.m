@@ -35,7 +35,11 @@ function result = load_yaml(filename)
     
     if isempty(topfilepth)
         [topfilepth,~,~,~] = fileparts(filename);
-        origpthstore = cd(topfilepth);
+        if ~isempty(topfilepth)
+            origpthstore = cd(topfilepth);
+        else
+            origpthstore = cd();
+        end;
         try
             info(1,'Importing top-level file: ', filename);
             result = scan(yaml.load(fileread(filename)));        
