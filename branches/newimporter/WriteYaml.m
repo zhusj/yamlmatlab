@@ -65,7 +65,7 @@ function result = scan_cell(r)
         result = scan_cell_row(r);
     elseif(iscolumnvector(r))
         result = scan_cell_column(r);
-    elseif(ismatrix(r))
+    elseif(ismymatrix(r))
         result = scan_cell_matrix(r);
     elseif(issingle(r));
         result = scan_cell_single(r);
@@ -82,7 +82,7 @@ function result = scan_ord(r)
         result = scan_ord_row(r);
     elseif(iscolumnvector(r))
         result = scan_ord_column(r);
-    elseif(ismatrix(r))
+    elseif(ismymatrix(r))
         result = scan_ord_matrix(r);
     elseif(issingle(r))
         result = scan_ord_single(r);
