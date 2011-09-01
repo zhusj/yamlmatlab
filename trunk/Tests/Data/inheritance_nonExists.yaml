@@ -1,18 +1,19 @@
-#             IMPORTANT should not be replaced
-#               handling 'info'
+#             - insurance.optional.NonExists should cause error
+
 cars:
     - color:blue
       label: JJ-XX-1500
       parent : - manufacturer.skoda
              - insurance.mandatory.Allianz
              - insurance.optional.Kooperativa
+             - insurance.optional.NonExists
       ins_note: IMPORTANT_1 
       info: {aaa: 2}
 
     - color: red
       label: DD-XX-1500
       ins_note: IMPORTANT_2
-      parent : [ manufacturer.audi, insurance.mandatory.Allianz ]
+      parent : [ manufacturer.audi, insurance.mandatory.Allianz,  insurance.optional.NonExists ]
 
 manufacturer:
     skoda:
@@ -41,9 +42,4 @@ insurance:
         Kooperativa: 
             ins_price:1000 CZK
 
-
-
-
-
-    
 
