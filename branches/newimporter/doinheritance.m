@@ -70,7 +70,7 @@ function result = inherit(child, parent_chr, container, oaroot, loc_imported)
     if ~iscell(parent_chr)
         parent_chr = {parent_chr};
     end;
-    for i = 1:length(parent_chr)
+    for i = length(parent_chr):-1:1
         if contains(loc_imported, parent_chr{i})
             error('MATLAB:MATYAML:inheritedtwice',['Cyclic inheritance: ', parent_chr{i}]);
         end;
