@@ -7,11 +7,9 @@
 %
 % by
 %
-%   [1,2,3;4,5,6]
+%   {1,2,3;4,5,6}
 %
-% Only substitutes cell of cells - does not substitute cell vectors nor
-% cell matrices.
-% It leaves other objects unchanged except that it changes cell
+% It leaves other objects unchanged except that it may change cell
 % orientations (from column to row, etc.)
 %==========================================================================
 function result = makematrices(r)
@@ -114,7 +112,7 @@ end
 %
 function result = ismatrixrow(cellvec)
     result = ...
-        isnumeric_all(cellvec) && ...
+        (isnumeric_all(cellvec) || isstruct_all(cellvec)) && ...
         issingle_all(cellvec) && ...
         iscompatible_all(cellvec);
 end
@@ -155,6 +153,13 @@ end
 %
 function result = isvector_all(cellvec)
     result = all(cellfun(@isvector, cellvec));
+end
+
+%--------------------------------------------------------------------------
+%
+%
+function result = isstruct_all(cellvec)
+    result = all(cellfun(@isstruct, cellvec));
 end
 
 %--------------------------------------------------------------------------

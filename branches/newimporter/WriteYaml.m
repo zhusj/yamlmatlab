@@ -3,12 +3,17 @@
 % hierarchy of java.util.ArrayListS and java.util.MapS. Then calls
 % Snakeyaml to write it to a file.
 %=========================================================================
-function WriteYaml(data, filename)
-    [pth,~,~,~] = fileparts(mfilename('fullpath'));
-    javaaddpath([pth '\external\snakeyaml-1.8.jar']);
-    import('org.yaml.snakeyaml.Yaml');
+function WriteYaml(filename, data)
+    [pth,~,~] = fileparts(mfilename('fullpath'));
+    javaaddpath([pth filesep 'external' filesep 'snakeyaml-1.9.jar']);
+    import('org.yaml.snakeyaml.*');
     javastruct = scan(data);
-    yaml = Yaml();
+    dumperopts = DumperOptions();
+    dumperopts.setLineBreak(...
+        javaMethod('getPlatformLineBreak',...
+        'org.yaml.snakeyaml.DumperOptions$LineBreak'));
+    yaml = Yaml(dumperopts);
+    
     output = yaml.dump(javastruct);
     fid = fopen(filename,'w');
     fprintf(fid,'%s',char(output) );
@@ -61,7 +66,7 @@ end
 %
 %
 function result = scan_cell(r)
-    if(isrowvector(r))
+    if(isrowvector(r))  
         result = scan_cell_row(r);
     elseif(iscolumnvector(r))
         result = scan_cell_column(r);
@@ -107,7 +112,11 @@ end
 function result = scan_cell_column(r)
     result = java.util.ArrayList();
     for ii = 1:size(r,1)
-        result.add(scan(r{ii}));
+        tmp = r{ii};
+        if ~iscell(tmp)
+            tmp = {tmp};
+        end;
+        result.add(scan(tmp));
     end;    
 end
 
@@ -126,7 +135,8 @@ end
 %
 %
 function result = scan_cell_single(r)
-    result = scan(r{1});
+    result = java.util.ArrayList();
+    result.add(scan(r{1}));
 end
 
 %--------------------------------------------------------------------------
@@ -143,7 +153,11 @@ end
 %
 %
 function result = scan_ord_column(r)
-    result = scan_ord_row(r);
+    result = java.util.ArrayList();
+    for i = 1:size(r,1)
+        r(i)
+        result.add(scan_ord_row(r(i)));
+    end;
 end
 
 %--------------------------------------------------------------------------

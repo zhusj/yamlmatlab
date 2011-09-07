@@ -97,7 +97,7 @@ end
 %
 function result = process_import_field(data)
     if iscell(data)
-        merged_structs = [];
+        merged_structs = struct();
         collected_nonstruct = {};
         for i = 1:length(data)
             if isstruct(data{i})
