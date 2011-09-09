@@ -1,4 +1,0 @@
-# predpoklada se, ze vstupni soubory budou vzdy v kodovani utf8 (pokud clovek pise s diakritikou, tak musi ukladat utf8), nicmene pozor na win matlab pracuje s win 1250 narozdil od  linuxu..
-- [name        , hr, avg  ]
-- [Mark McGwire, 65, 0.278]
-- [Příliš žluťoučký kůň pěl ďábelské ódy v úhlu , 63 °C, 0.288]
