@@ -17,6 +17,8 @@ function result = merge_struct(p, s, donotmerge, deep)
         deep = 1;
     end;
     
+
+    
     result = p;
     for i = fields(s)'
         fld = char(i);
@@ -32,7 +34,7 @@ function result = merge_struct(p, s, donotmerge, deep)
         %disp(['fieldname: ',fld]);
         %disp(s.(fld));
         %disp('----------');
-        if deep == 1 && isfield(result, fld)
+        if deep == 1 && isfield(result, fld) && isstruct(result.(fld)) && isstruct(s.(fld))
             result.(fld) = merge_struct(result.(fld), s.(fld), donotmerge, deep);
         else
             result.(fld) = s.(fld);
