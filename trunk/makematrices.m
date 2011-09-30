@@ -54,6 +54,8 @@ function result = iter_cell(data, level, addit)
         tmp = cell2mat(tmp);
         tmp = num2cell(tmp);
         result = tmp;
+    elseif isempty(data)
+        result = [];
     else   
         result = {};
         for i = 1:length(data)

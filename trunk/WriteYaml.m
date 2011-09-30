@@ -45,7 +45,11 @@ end
 %
 %
 function result = scan_numeric(r)
-    result = java.lang.Double(r);
+    if isempty(r)
+        result = java.util.ArrayList();
+    else
+        result = java.lang.Double(r);
+    end
 end
 
 %--------------------------------------------------------------------------
@@ -74,6 +78,8 @@ function result = scan_cell(r)
         result = scan_cell_matrix(r);
     elseif(issingle(r));
         result = scan_cell_single(r);
+    elseif(isempty(r))
+        result = java.util.ArrayList();
     else
         error('Unknown cell content.');
     end;
