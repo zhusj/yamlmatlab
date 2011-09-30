@@ -19,6 +19,7 @@ classdef DateTime
         Auth  Date        Description of change
         ----  ---------   -------------------------------------------------
         jc    01-Mar-11   First implementation
+        jc    30-Sep-11   Added function colon
     %}
     %======================================================================
 
@@ -68,6 +69,12 @@ classdef DateTime
             for i=1:numel(varargin)
                 this.serialDate = [this.serialDate, varargin{i}.serialDate];
             end
+        end
+        
+        function out = colon(this,step,to)
+            vect = [double(this):double(step):double(to)]';
+            
+            out =DateTime(vect);
         end
         
         function this = vertcat(this,varargin)
@@ -211,6 +218,8 @@ classdef DateTime
         function out = datestr(this)
             out = datestr(this.serialDate);
         end
+        
+        
     end
     
     methods (Access = private)
