@@ -34,7 +34,8 @@ function result = load_yaml(filename)
     yaml = org.yaml.snakeyaml.Yaml(); % It appears that Java objects cannot be persistent...!?
     
     if isempty(topfilepth)
-        [topfilepth,~,~] = fileparts(filename);
+        [topfilepth,topfilename,topfileext] = fileparts(filename);
+        topfilene = [topfilename,topfileext];
         if ~isempty(topfilepth)
             origpthstore = cd(topfilepth);
         else
@@ -42,7 +43,7 @@ function result = load_yaml(filename)
         end;
         try
             info(1,'Importing top-level file: ', filename);
-            result = scan(yaml.load(fileread(filename)));        
+            result = scan(yaml.load(fileread(topfilene)));        
         catch ex
             cd(origpthstore);
             clear(topfilepth);
