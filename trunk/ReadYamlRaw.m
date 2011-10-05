@@ -27,42 +27,26 @@ end
 %  error occurs, it sets cwd back to the stored value.
 %  - Otherwise just calls the parser and runs the transformation.
 %
-function result = load_yaml(filename)
-    persistent topfilepth;
-    persistent origpthstore;
-    
+function result = load_yaml(inputfilename)
     yaml = org.yaml.snakeyaml.Yaml(); % It appears that Java objects cannot be persistent...!?
     
-    if isempty(topfilepth)
-        [topfilepth,topfilename,topfileext] = fileparts(filename);
-        topfilene = [topfilename,topfileext];
-        if ~isempty(topfilepth)
-            origpthstore = cd(topfilepth);
-        else
-            origpthstore = cd();
-        end;
-        try
-            info(1,'Importing top-level file: ', filename);
-            result = scan(yaml.load(fileread(topfilene)));        
-        catch ex
-            cd(origpthstore);
-            clear(topfilepth);
-            rethrow(ex);
-        end;
-        cd(origpthstore);
-        clear(topfilepth);
+    [filepath, filename, fileext] = fileparts(inputfilename);
+    if isempty(filepath)
+        pathstore = cd();
     else
-        info(1,'Importing file: ', filename);
-        try
-            result = scan(yaml.load(fileread(filename)));
-        catch ex
-            switch ex.identifier
-                case 'MATLAB:fileread:cannotOpenFile'
-                    error('MATLAB:MATYAML:ImportNotFound', ['No such file to import: ',filename]);
-            end;
-            rethrow(ex);
-        end;
+        pathstore = cd(filepath);
     end;
+    try
+        result = scan(yaml.load(fileread([filename, fileext])));
+    catch ex
+        cd(pathstore);
+        switch ex.identifier
+            case 'MATLAB:fileread:cannotOpenFile'
+                error('MATLAB:MATYAML:FileNotFound', ['No such file to read: ',filename]);
+        end;
+        rethrow(ex);
+    end;
+    cd(pathstore);    
 end
 
 %--------------------------------------------------------------------------
