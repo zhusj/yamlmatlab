@@ -206,7 +206,7 @@ function stat = test_RY_ImportNonex()
         try
             ry = ReadYaml([PTH_IMPORT() 'import_nonex.yaml']);
         catch ex
-            if strcmp(ex.identifier, 'MATLAB:MATYAML:ImportNotFound')
+            if strcmp(ex.identifier, 'MATLAB:MATYAML:FileNotFound')
                 stat.desc = '';
                 stat.ok = 1;
             else
