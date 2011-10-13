@@ -13,8 +13,21 @@
 %   - Does inheritance - see doinheritance(...) for details.
 %   - Makes matrices from cell vectors - see makematrices(...) for details.
 %
-function result = ReadYaml(filename)
-    ry = ReadYamlRaw(filename, 0);
+% Parameters:
+%   filename         ... name of an input yaml file
+%   nosuchfileaction ... Determines what to do if a file to read is missing
+%                        0 or not present - missing file will only throw a
+%                                           warning
+%                        1                - missing file throws an
+%                                           exception and halts the process
+function result = ReadYaml(filename, nosuchfileaction)
+    if ~exist('nosuchfileaction','var')
+        nosuchfileaction = 0;
+    end;
+    if ~ismember(nosuchfileaction,[0,1])
+        error('nosuchfileexception parameter must be 0,1 or missing.');
+    end;
+    ry = ReadYamlRaw(filename, 0, nosuchfileaction);
     ry = deflateimports(ry);
     if iscell(ry) && ...
         length(ry) == 1 && ...
@@ -27,4 +40,5 @@ function result = ReadYaml(filename)
     ry = doinheritance(ry);
     ry = makematrices(ry);
     result = ry;
+    clear global nsfe;
 end

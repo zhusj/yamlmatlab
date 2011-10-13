@@ -6,7 +6,7 @@
 %  verbose  ... verbosity level (0 or absent = no messages, 
 %                                          1 = notify imports)
 %==========================================================================
-function result = ReadYamlRaw(filename, verbose)
+function result = ReadYamlRaw(filename, verbose, nosuchfileaction)
     if ~exist('verbose','var')
         verbose = 0;
     end;
@@ -16,7 +16,7 @@ function result = ReadYamlRaw(filename, verbose)
     
     setverblevel(verbose);
     % import('org.yaml.snakeyaml.Yaml'); % import here does not affect import in load_yaml ...!?
-    result = load_yaml(filename);
+    result = load_yaml(filename, nosuchfileaction);
 end
 
 %--------------------------------------------------------------------------
@@ -27,7 +27,15 @@ end
 %  error occurs, it sets cwd back to the stored value.
 %  - Otherwise just calls the parser and runs the transformation.
 %
-function result = load_yaml(inputfilename)
+function result = load_yaml(inputfilename, nosuchfileaction)
+
+    global nsfe;
+
+    if isempty(nsfe)
+        nsfe = nosuchfileaction;
+    end;
+
+
     yaml = org.yaml.snakeyaml.Yaml(); % It appears that Java objects cannot be persistent...!?
     
     [filepath, filename, fileext] = fileparts(inputfilename);
@@ -42,7 +50,13 @@ function result = load_yaml(inputfilename)
         cd(pathstore);
         switch ex.identifier
             case 'MATLAB:fileread:cannotOpenFile'
-                error('MATLAB:MATYAML:FileNotFound', ['No such file to read: ',filename]);
+                if nsfe
+                    error('MATLAB:MATYAML:FileNotFound', ['No such file to read: ',filename]);
+                else
+                    warning('MATLAB:MATYAML:FileNotFound', ['No such file to read: ',filename]);
+                    result = struct();
+                    return;
+                end;
         end;
         rethrow(ex);
     end;

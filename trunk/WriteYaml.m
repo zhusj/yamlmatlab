@@ -161,7 +161,6 @@ end
 function result = scan_ord_column(r)
     result = java.util.ArrayList();
     for i = 1:size(r,1)
-        r(i)
         result.add(scan_ord_row(r(i)));
     end;
 end
