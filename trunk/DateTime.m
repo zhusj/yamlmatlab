@@ -29,7 +29,15 @@ classdef DateTime
     methods
         function this = DateTime(varargin)
             if numel(varargin)==1 && isa(varargin{1},'java.util.Date')
-                    this.serialDate=-java.util.Date().getTimezoneOffset()/(60*24)+datenum(char(varargin{1}.toGMTString));
+                    df = java.text.SimpleDateFormat( 'yyyy-MM-dd HH:mm:ss' );
+                    tz = java.util.TimeZone.getTimeZone ('UTC');
+                    df.setTimeZone( tz );
+                    this.serialDate=datenum(char(df.format(varargin{1})));
+                    %this.serialDate = datenum(char(varargin{1}.toString)) - varargin{1}.getTimezoneOffset/60/24;
+                    %disp ( [ char(varargin{1}.toGMTString), '---' char(varargin{1}.toString ), '---', char(varargin{1}.toLocaleString )]);
+                    %if (varargin{1}.getTimezoneOffset)~=-120
+                    %    disp(1);
+                    %end
             else
                 this.serialDate=datenum(varargin{:});
             end
@@ -215,8 +223,8 @@ classdef DateTime
         function this = min(this,varargin)
             this.serialDate = min(this.serialDate,varargin{:});
         end
-        function out = datestr(this)
-            out = datestr(this.serialDate);
+        function out = datestr(this,varargin)
+            out = datestr(this.serialDate,varargin{:});
         end
         
         

@@ -63,6 +63,8 @@ end
 %
 %
 function result = scan_datetime(r)
+    % datestr 30..in ISO8601 format
+    %java.text.SimpleDateFormat('yyyymmdd'T'HH:mm:ssz" );
     result = java.util.Date(datestr(r));
 end
 
