@@ -91,7 +91,6 @@ end
 %
 %
 function result = scan_ord(r)
-class(r)
     if(isrowvector(r))
         result = scan_ord_row(r);
     elseif(iscolumnvector(r))
