@@ -20,13 +20,21 @@
 %                                           warning
 %                        1                - missing file throws an
 %                                           exception and halts the process
-function result = ReadYaml(filename, nosuchfileaction)
+%   makeords         ... Determines whether to convert cell array to
+%                        ordinary matrix whenever possible (1).
+function result = ReadYaml(filename, nosuchfileaction, makeords)
     if ~exist('nosuchfileaction','var')
         nosuchfileaction = 0;
     end;
     if ~ismember(nosuchfileaction,[0,1])
         error('nosuchfileexception parameter must be 0,1 or missing.');
     end;
+    if ~exist('makeords','var')
+        makeords = 0;
+    end;
+    if ~ismember(makeords,[0,1])
+        error('makeords parameter must be 0,1 or missing.');
+    end;    
     ry = ReadYamlRaw(filename, 0, nosuchfileaction);
     ry = deflateimports(ry);
     if iscell(ry) && ...
@@ -38,7 +46,7 @@ function result = ReadYaml(filename, nosuchfileaction)
     end;
     ry = mergeimports(ry);    
     ry = doinheritance(ry);
-    ry = makematrices(ry);
+    ry = makematrices(ry, makeords);
     result = ry;
     clear global nsfe;
 end
