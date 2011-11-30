@@ -91,6 +91,7 @@ end
 %
 %
 function result = scan_ord(r)
+class(r)
     if(isrowvector(r))
         result = scan_ord_row(r);
     elseif(iscolumnvector(r))
@@ -99,6 +100,8 @@ function result = scan_ord(r)
         result = scan_ord_matrix(r);
     elseif(issingle(r))
         result = scan_ord_single(r);
+    elseif(isempty(r))
+        result = java.util.ArrayList();
     else
         error('Unknown ordinary array content.');
     end;
@@ -176,6 +179,17 @@ function result = scan_ord_matrix(r)
         result.add(scan_ord_row(i'));
     end;
 end
+
+%--------------------------------------------------------------------------
+%
+%
+function result = scan_ord_single(r)
+    result = java.util.ArrayList();
+    for i = r'
+        result.add(r);
+    end;
+end
+
 
 %--------------------------------------------------------------------------
 %

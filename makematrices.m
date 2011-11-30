@@ -11,19 +11,22 @@
 %
 % It leaves other objects unchanged except that it may change cell
 % orientations (from column to row, etc.)
+%
+% Parameter makeords determines whether to convert from cells to normal
+% matrices whenever possible (1) or leave matrices as cells (0).
 %==========================================================================
-function result = makematrices(r)
-    result = recurse(r, 0, []);
+function result = makematrices(r, makeords)
+    result = recurse(r, 0, [], makeords);
 end
 
 %--------------------------------------------------------------------------
 % 
 %
-function result = recurse(data, level, addit)
+function result = recurse(data, level, addit, makeords)
     if iscell(data)
-        result = iter_cell(data, level, addit);
+        result = iter_cell(data, level, addit, makeords);
     elseif isstruct(data)
-        result = iter_struct(data, level, addit);
+        result = iter_struct(data, level, addit, makeords);
     else
         result = scan_data(data, level, addit);
     end;
@@ -40,7 +43,7 @@ end
 %   - All its items are rows of a matrix (see ismatrixrow(...))
 % Otherwise the content is left unchanged.
 %
-function result = iter_cell(data, level, addit)
+function result = iter_cell(data, level, addit, makeords)
     if  isvector(data) && ...
         iscell_all(data) && ...
         isvector_all(data) && ...
@@ -52,14 +55,16 @@ function result = iter_cell(data, level, addit)
         tmp = cellfun(@torow, tmp, 'UniformOutput', 0);
         tmp = tocolumn(tmp);
         tmp = cell2mat(tmp);
-        tmp = num2cell(tmp);
+        if ~makeords
+            tmp = num2cell(tmp);
+        end;
         result = tmp;
     elseif isempty(data)
         result = [];
     else   
         result = {};
         for i = 1:length(data)
-            result{i} = recurse(data{i}, level + 1, addit);
+            result{i} = recurse(data{i}, level + 1, addit, makeords);
         end;
     end;
 end
@@ -67,11 +72,11 @@ end
 %--------------------------------------------------------------------------
 %
 %
-function result = iter_struct(data, level, addit)
+function result = iter_struct(data, level, addit, makeords)
     result = struct();
     for i = fields(data)'
         fld = char(i);
-        result.(fld) = recurse(data.(fld), level + 1, addit);
+        result.(fld) = recurse(data.(fld), level + 1, addit, makeords);
     end;
 end
 
