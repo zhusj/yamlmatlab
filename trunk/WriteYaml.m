@@ -65,7 +65,15 @@ end
 function result = scan_datetime(r)
     % datestr 30..in ISO8601 format
     %java.text.SimpleDateFormat('yyyymmdd'T'HH:mm:ssz" );
-    result = java.util.Date(datestr(r));
+    
+    [Y, M, D, H, MN,S] = datevec(double(r));            
+	result = java.util.GregorianCalendar(Y, M-1, D, H, MN,S);
+	result.setTimeZone(java.util.TimeZone.getTimeZone('UTC'));
+    
+    %tz = java.util.TimeZone.getTimeZone('UTC');
+    %cal = java.util.GregorianCalendar(tz);
+    %cal.set
+    %result = java.util.Date(datestr(r));
 end
 
 %--------------------------------------------------------------------------
