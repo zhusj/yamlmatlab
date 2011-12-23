@@ -6,17 +6,23 @@
 %  verbose  ... verbosity level (0 or absent = no messages, 
 %                                          1 = notify imports)
 %==========================================================================
-function result = ReadYamlRaw(filename, verbose, nosuchfileaction)
+function result = ReadYamlRaw(filename, verbose, nosuchfileaction, treatasdata)
     if ~exist('verbose','var')
         verbose = 0;
     end;
     
     [pth,~,~] = fileparts(mfilename('fullpath'));       
-    javaaddpath([pth filesep 'external' filesep 'snakeyaml-1.9.jar']); % javaaddpath clears global variables...!?
+    try
+        import('org.yaml.snakeyaml.*');
+        javaObject('Yaml');
+    catch
+        javaaddpath([pth filesep 'external' filesep 'snakeyaml-1.9.jar']); % javaaddpath clears global variables...!?
+        import('org.yaml.snakeyaml.*');
+    end;
     
     setverblevel(verbose);
     % import('org.yaml.snakeyaml.Yaml'); % import here does not affect import in load_yaml ...!?
-    result = load_yaml(filename, nosuchfileaction);
+    result = load_yaml(filename, nosuchfileaction, treatasdata);
 end
 
 %--------------------------------------------------------------------------
@@ -27,32 +33,38 @@ end
 %  error occurs, it sets cwd back to the stored value.
 %  - Otherwise just calls the parser and runs the transformation.
 %
-function result = load_yaml(inputfilename, nosuchfileaction)
+function result = load_yaml(inputfilename, nosuchfileaction, treatasdata)
 
     global nsfe;
 
     if isempty(nsfe)
         nsfe = nosuchfileaction;
     end;
-
-
+   
     yaml = org.yaml.snakeyaml.Yaml(); % It appears that Java objects cannot be persistent...!?
-    
-    [filepath, filename, fileext] = fileparts(inputfilename);
-    if isempty(filepath)
-        pathstore = cd();
-    else
-        pathstore = cd(filepath);
+    if ~treatasdata
+        [filepath, filename, fileext] = fileparts(inputfilename);
+        if isempty(filepath)
+            pathstore = cd();
+        else
+            pathstore = cd(filepath);
+        end;
     end;
     try
-        result = scan(yaml.load(fileread([filename, fileext])));
+        if ~treatasdata
+            result = scan(yaml.load(fileread([filename, fileext])));
+        else
+            result = scan(yaml.load(inputfilename));
+        end;
     catch ex
-        cd(pathstore);
+        if ~treatasdata
+            cd(pathstore);
+        end;
         switch ex.identifier
             case 'MATLAB:fileread:cannotOpenFile'
-                if nsfe
+                if nsfe == 1
                     error('MATLAB:MATYAML:FileNotFound', ['No such file to read: ',filename]);
-                else
+                elseif nsfe == 0
                     warning('MATLAB:MATYAML:FileNotFound', ['No such file to read: ',filename]);
                     result = struct();
                     return;
@@ -60,7 +72,9 @@ function result = load_yaml(inputfilename, nosuchfileaction)
         end;
         rethrow(ex);
     end;
-    cd(pathstore);    
+    if ~treatasdata
+        cd(pathstore);    
+    end;
 end
 
 %--------------------------------------------------------------------------
