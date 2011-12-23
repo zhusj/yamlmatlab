@@ -22,7 +22,7 @@
 %                                           exception and halts the process
 %   makeords         ... Determines whether to convert cell array to
 %                        ordinary matrix whenever possible (1).
-function result = ReadYaml(filename, nosuchfileaction, makeords)
+function result = ReadYaml(filename, nosuchfileaction, makeords, treatasdata)
     if ~exist('nosuchfileaction','var')
         nosuchfileaction = 0;
     end;
@@ -35,7 +35,13 @@ function result = ReadYaml(filename, nosuchfileaction, makeords)
     if ~ismember(makeords,[0,1])
         error('makeords parameter must be 0,1 or missing.');
     end;    
-    ry = ReadYamlRaw(filename, 0, nosuchfileaction);
+    if(~exist('treatasdata','var'))
+        treatasdata = 0;
+    end;
+    if ~ismember(treatasdata,[0,1])
+        error('treatasdata parameter must be 0,1 or missing.');
+    end; 
+    ry = ReadYamlRaw(filename, 0, nosuchfileaction, treatasdata);
     ry = deflateimports(ry);
     if iscell(ry) && ...
         length(ry) == 1 && ...

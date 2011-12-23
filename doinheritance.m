@@ -23,8 +23,11 @@
 % instead of one simple string.
 %
 %==========================================================================
-function result = doinheritance(r)
-    result = recurse(r, 0, {r});
+function result = doinheritance(r, tr)
+    if ~exist('tr','var')
+        tr = r;
+    end;
+    result = recurse(r, 0, {tr});
 end
 
 function result = recurse(data, level, addit)

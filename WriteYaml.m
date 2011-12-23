@@ -3,10 +3,16 @@
 % hierarchy of java.util.ArrayListS and java.util.MapS. Then calls
 % Snakeyaml to write it to a file.
 %=========================================================================
-function WriteYaml(filename, data)
+function result = WriteYaml(filename, data)
+    result = [];
     [pth,~,~] = fileparts(mfilename('fullpath'));
-    javaaddpath([pth filesep 'external' filesep 'snakeyaml-1.9.jar']);
-    import('org.yaml.snakeyaml.*');
+    try
+        import('org.yaml.snakeyaml.*');
+        javaObject('Yaml');
+    catch
+        javaaddpath([pth filesep 'external' filesep 'snakeyaml-1.9.jar']);
+        import('org.yaml.snakeyaml.*');
+    end;
     javastruct = scan(data);
     dumperopts = DumperOptions();
     dumperopts.setLineBreak(...
@@ -15,9 +21,13 @@ function WriteYaml(filename, data)
     yaml = Yaml(dumperopts);
     
     output = yaml.dump(javastruct);
-    fid = fopen(filename,'w');
-    fprintf(fid,'%s',char(output) );
-    fclose(fid);
+    if ~isempty(filename)
+        fid = fopen(filename,'w');
+        fprintf(fid,'%s',char(output) );
+        fclose(fid);
+    else
+        result = output;
+    end;
 end
 
 %--------------------------------------------------------------------------
