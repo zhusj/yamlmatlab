@@ -91,6 +91,8 @@ function result = scan(r)
         result = scan_string(r);
     elseif isa(r, 'double')
         result = scan_numeric(r);
+    elseif isa(r, 'logical')
+        result = scan_logical(r);
     elseif isa(r, 'java.util.Date')
         result = scan_datetime(r);
     elseif isa(r, 'java.util.List')
@@ -114,6 +116,13 @@ end
 %
 function result = scan_numeric(r)
     result = double(r);
+end
+
+%--------------------------------------------------------------------------
+% Transforms Java boolean to MATLAB logical
+%
+function result = scan_logical(r)
+    result = logical(r);
 end
 
 %--------------------------------------------------------------------------

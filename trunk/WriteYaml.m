@@ -60,6 +60,8 @@ function result = scan(r)
         result = scan_struct(r);                
     elseif isnumeric(r)
         result = scan_numeric(r);
+    elseif islogical(r)
+        result = scan_logical(r);
     elseif isa(r,'DateTime')
         result = scan_datetime(r);
     else
@@ -81,8 +83,24 @@ end
 %--------------------------------------------------------------------------
 %
 %
+
+function result = scan_logical(r)
+    if isempty(r)
+        result = java.util.ArrayList();
+    else
+        result = java.lang.Boolean(r);
+    end
+end
+
+%--------------------------------------------------------------------------
+%
+%
 function result = scan_char(r)
-    result = java.lang.String(r);
+    if isempty(r)
+        result = java.util.ArrayList();
+    else
+        result = java.lang.String(r);
+    end
 end
 
 %--------------------------------------------------------------------------
