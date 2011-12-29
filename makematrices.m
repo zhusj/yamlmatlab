@@ -119,7 +119,7 @@ end
 %
 function result = ismatrixrow(cellvec)
     result = ...
-        (isnumeric_all(cellvec) || isstruct_all(cellvec)) && ...
+        (isnumeric_all(cellvec) || islogical_all(cellvec) || isstruct_all(cellvec)) && ...
         issingle_all(cellvec) && ...
         iscompatible_all(cellvec);
 end
@@ -129,6 +129,13 @@ end
 %
 function result = isnumeric_all(cellvec)
     result = all(cellfun(@isnumeric, cellvec));
+end
+
+%--------------------------------------------------------------------------
+%
+%
+function result = islogical_all(cellvec)
+    result = all(cellfun(@islogical, cellvec));
 end
 
 %--------------------------------------------------------------------------
