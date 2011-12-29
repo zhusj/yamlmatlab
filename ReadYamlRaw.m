@@ -35,14 +35,20 @@ end
 %
 function result = load_yaml(inputfilename, nosuchfileaction, treatasdata)
 
-    global nsfe;
+    persistent nsfe;
 
-    if isempty(nsfe)
+    if isempty(nsfe) && exist('nosuchfileaction','var')
         nsfe = nosuchfileaction;
+    end;
+    
+    persistent tadf;
+    
+    if isempty(tadf) && exist('treatasdata','var')
+        tadf = treatasdata;
     end;
    
     yaml = org.yaml.snakeyaml.Yaml(); % It appears that Java objects cannot be persistent...!?
-    if ~treatasdata
+    if ~tadf
         [filepath, filename, fileext] = fileparts(inputfilename);
         if isempty(filepath)
             pathstore = cd();
@@ -51,13 +57,13 @@ function result = load_yaml(inputfilename, nosuchfileaction, treatasdata)
         end;
     end;
     try
-        if ~treatasdata
+        if ~tadf
             result = scan(yaml.load(fileread([filename, fileext])));
         else
             result = scan(yaml.load(inputfilename));
         end;
     catch ex
-        if ~treatasdata
+        if ~tadf
             cd(pathstore);
         end;
         switch ex.identifier
@@ -72,7 +78,7 @@ function result = load_yaml(inputfilename, nosuchfileaction, treatasdata)
         end;
         rethrow(ex);
     end;
-    if ~treatasdata
+    if ~tadf
         cd(pathstore);    
     end;
 end
