@@ -3,7 +3,13 @@
 % hierarchy of java.util.ArrayListS and java.util.MapS. Then calls
 % Snakeyaml to write it to a file.
 %=========================================================================
-function result = WriteYaml(filename, data)
+function result = WriteYaml(filename, data, flowstyle)
+    if ~exist('flowstyle','var')
+        flowstyle = 0;
+    end;
+    if ~ismember(flowstyle, [0,1])
+        error('Flowstyle must be 0,1 or empty.');
+    end;
     result = [];
     [pth,~,~] = fileparts(mfilename('fullpath'));
     try
@@ -18,6 +24,16 @@ function result = WriteYaml(filename, data)
     dumperopts.setLineBreak(...
         javaMethod('getPlatformLineBreak',...
         'org.yaml.snakeyaml.DumperOptions$LineBreak'));
+    if flowstyle
+        classes = dumperopts.getClass.getClasses;
+        flds = classes(3).getDeclaredFields();
+        fsfld = flds(1);
+        if ~strcmp(char(fsfld.getName), 'FLOW')
+            error(['Accessed another field instead of FLOW. Please correct',...
+            'class/field indices (this error maybe caused by new snakeyaml version).']);
+        end;
+        dumperopts.setDefaultFlowStyle(fsfld.get([]));
+    end;
     yaml = Yaml(dumperopts);
     
     output = yaml.dump(javastruct);
