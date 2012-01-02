@@ -11,6 +11,20 @@ function result = ReadYamlRaw(filename, verbose, nosuchfileaction, treatasdata)
         verbose = 0;
     end;
     
+    if ~exist('nosuchfileaction','var')
+        nosuchfileaction = 0;
+    end;
+    if ~ismember(nosuchfileaction,[0,1])
+        error('nosuchfileexception parameter must be 0,1 or missing.');
+    end;
+    
+    if(~exist('treatasdata','var'))
+        treatasdata = 0;
+    end;
+    if ~ismember(treatasdata,[0,1])
+        error('treatasdata parameter must be 0,1 or missing.');
+    end;
+    
     [pth,~,~] = fileparts(mfilename('fullpath'));       
     try
         import('org.yaml.snakeyaml.*');
@@ -69,9 +83,9 @@ function result = load_yaml(inputfilename, nosuchfileaction, treatasdata)
         switch ex.identifier
             case 'MATLAB:fileread:cannotOpenFile'
                 if nsfe == 1
-                    error('MATLAB:MATYAML:FileNotFound', ['No such file to read: ',filename]);
+                    error('MATLAB:MATYAML:FileNotFound', ['No such file to read: ',filename,fileext]);
                 elseif nsfe == 0
-                    warning('MATLAB:MATYAML:FileNotFound', ['No such file to read: ',filename]);
+                    warning('MATLAB:MATYAML:FileNotFound', ['No such file to read: ',filename,fileext]);
                     result = struct();
                     return;
                 end;
