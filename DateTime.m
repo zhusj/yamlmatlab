@@ -20,6 +20,7 @@ classdef DateTime
         ----  ---------   -------------------------------------------------
         jc    01-Mar-11   First implementation
         jc    30-Sep-11   Added function colon
+        jc    07-Jan-12   Added functions addtodate,datevec,weekday
     %}
     %======================================================================
 
@@ -226,6 +227,46 @@ classdef DateTime
         function out = datestr(this,varargin)
             out = datestr(this.serialDate,varargin{:});
         end
+        
+        function out = addtodate(this,varargin)
+            out = addtodate(this.serialDate,varargin{:});
+        end
+        function varargout= datevec(this,varargin)
+            nout = nargout;
+            if nout <=1
+                varargout{1} = datevec(this.serialDate,varargin{:});
+            elseif nout ==2
+                [varargout{1} varargout{2}] = datevec(this.serialDate,varargin{:});
+                
+                
+            elseif nout ==3
+                [varargout{1} varargout{2} varargout{3}] = datevec(this.serialDate,varargin{:});
+                
+            elseif nout ==4
+                [varargout{1} varargout{2} varargout{3} varargout{4}] = datevec(this.serialDate,varargin{:});
+                
+            elseif nout ==5
+                [varargout{1} varargout{2} varargout{3} varargout{4} varargout{5} ] = datevec(this.serialDate,varargin{:});
+                
+            elseif nout ==6
+                [varargout{1} varargout{2} varargout{3} varargout{4} varargout{5} varargout{6} ] = datevec(this.serialDate,varargin{:});
+            else 
+                error('Unknown function call');
+            end
+        end
+        
+        function varargout= weekday(this,varargin)
+            nout = nargout;
+            if nout <=1
+                varargout{1} = weekday(this.serialDate,varargin{:});
+            elseif nout ==2
+                [varargout{1} varargout{2}] = weekday(this.serialDate,varargin{:});
+                
+             else 
+                error('Unknown function call');
+            end
+        end
+        
         
         
     end
