@@ -181,6 +181,9 @@ function result = scan_map(r)
             result.(ich) = scan(r.get(java.lang.String(ich)));
         end;
     end;
+    if not(exist('result','var'))
+        result={};
+    end
 end
 
 %--------------------------------------------------------------------------
