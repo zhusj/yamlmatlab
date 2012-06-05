@@ -22,7 +22,9 @@
 %                                           exception and halts the process
 %   makeords         ... Determines whether to convert cell array to
 %                        ordinary matrix whenever possible (1).
-function result = ReadYaml(filename, nosuchfileaction, makeords, treatasdata)
+%   dictionary       ... Dictionary of of labels that will be replaced,
+%                        struct is expected
+function result = ReadYaml(filename, nosuchfileaction, makeords, treatasdata, dictionary)
     if ~exist('nosuchfileaction','var')
         nosuchfileaction = 0;
     end;
@@ -41,6 +43,8 @@ function result = ReadYaml(filename, nosuchfileaction, makeords, treatasdata)
     if ~ismember(treatasdata,[0,1])
         error('treatasdata parameter must be 0,1 or missing.');
     end; 
+
+    
     ry = ReadYamlRaw(filename, 0, nosuchfileaction, treatasdata);
     ry = deflateimports(ry);
     if iscell(ry) && ...
@@ -52,7 +56,11 @@ function result = ReadYaml(filename, nosuchfileaction, makeords, treatasdata)
     end;
     ry = mergeimports(ry);    
     ry = doinheritance(ry);
-    ry = makematrices(ry, makeords);
+    ry = makematrices(ry, makeords);    
+    if exist('dictionary','var')
+        ry = dosubstitution(ry, dictionary);
+    end;
+    
     result = ry;
     clear global nsfe;
 end
