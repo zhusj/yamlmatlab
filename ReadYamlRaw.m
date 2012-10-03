@@ -30,7 +30,10 @@ function result = ReadYamlRaw(filename, verbose, nosuchfileaction, treatasdata)
         import('org.yaml.snakeyaml.*');
         javaObject('Yaml');
     catch
-        javaaddpath([pth filesep 'external' filesep 'snakeyaml-1.9.jar']); % javaaddpath clears global variables...!?
+        dp = [pth filesep 'external' filesep 'snakeyaml-1.9.jar'];
+        if not(ismember(dp, javaclasspath ('-dynamic')))
+        	javaaddpath(dp); % javaaddpath clears global variables...!?
+        end
         import('org.yaml.snakeyaml.*');
     end;
     

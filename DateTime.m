@@ -24,6 +24,14 @@ classdef DateTime
     %}
     %======================================================================
 
+    
+    % TODO 
+    
+    
+%ate and Time Operations
+%addtodateModify date number by fieldcalendarCalendar for specified monthclockCurrent time as date vectorcputimeElapsed CPU timedateCurrent date stringdatenumConvert date and time to serial date numberdatestrConvert date and time to string formatdatevecConvert date and time to vector of componentseomdayLast day of monthetimeTime elapsed between date vectorsnowCurrent date and timeweekdayDay of wee
+    
+    
     properties
         serialDate
     end
@@ -254,19 +262,6 @@ classdef DateTime
                 error('Unknown function call');
             end
         end
-        
-        function varargout= weekday(this,varargin)
-            nout = nargout;
-            if nout <=1
-                varargout{1} = weekday(this.serialDate,varargin{:});
-            elseif nout ==2
-                [varargout{1} varargout{2}] = weekday(this.serialDate,varargin{:});
-                
-             else 
-                error('Unknown function call');
-            end
-        end
-        
         
         
     end
