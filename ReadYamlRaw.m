@@ -54,7 +54,7 @@ function result = load_yaml(inputfilename, nosuchfileaction, treatasdata)
 
     persistent nsfe;
 
-    if isempty(nsfe) && exist('nosuchfileaction','var')
+    if exist('nosuchfileaction','var') %isempty(nsfe) && 
         nsfe = nosuchfileaction;
     end;
     
@@ -181,7 +181,7 @@ function result = scan_map(r)
         if iskw_import(ich)
             result.(ich) = perform_import(r.get(java.lang.String(ich)));
         else
-            result.(ich) = scan(r.get(java.lang.String(ich)));
+            result.(genvarname(ich)) = scan(r.get(java.lang.String(ich)));
         end;
     end;
     if not(exist('result','var'))

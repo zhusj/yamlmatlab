@@ -9,6 +9,8 @@ try
     fprintf('Testing read ');
     stat.test_RY_Matrices = test_RY_Matrices();
     fprintf('.');
+    stat.test_RY_Whitespaces = test_RY_Whitespaces();
+    fprintf('.');
     stat.test_RY_FloatingPoints = test_RY_FloatingPoints();
     fprintf('.');
     stat.test_RY_Indentation = test_RY_Indentation();
@@ -273,6 +275,21 @@ function stat = test_RY_InheritanceLoop()
     end;
 end
 
+function stat = test_RY_Whitespaces()
+    stat.ok = 1;
+    stat.desc = '';
+    try
+        ry = ReadYaml([PTH_PRIMITIVES() 'whitespaces.yaml']);
+        if ~isfield(ry,'ImageFile') || ~isfield(ry,'ContoursCount')         
+            stat.desc  = 'Wrong values loaded';
+            stat.ok = 0;         
+        end;
+    catch
+        stat.ok = 0;
+        stat.desc = 'Crash';
+    end;
+end
+
 function stat = test_RY_usecase_01()
     stat.ok = 1;
     stat.desc = '';
@@ -288,6 +305,7 @@ function stat = test_RY_usecase_01()
         stat.desc = 'Crash';
     end;
 end
+
 
 function stat = test_ReadYaml_SimpleStructure()
 
