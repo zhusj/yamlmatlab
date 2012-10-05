@@ -16,7 +16,10 @@ function result = WriteYaml(filename, data, flowstyle)
         import('org.yaml.snakeyaml.*');
         javaObject('Yaml');
     catch
-        javaaddpath([pth filesep 'external' filesep 'snakeyaml-1.9.jar']);
+        dp = [pth filesep 'external' filesep 'snakeyaml-1.9.jar'];
+        if not(ismember(dp, javaclasspath ('-dynamic')))
+        	javaaddpath(dp); % javaaddpath clears global variables...!?
+        end
         import('org.yaml.snakeyaml.*');
     end;
     javastruct = scan(data);
