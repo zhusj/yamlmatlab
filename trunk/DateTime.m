@@ -38,10 +38,13 @@ classdef DateTime
     methods
         function this = DateTime(varargin)
             if numel(varargin)==1 && isa(varargin{1},'java.util.Date')
-                    df = java.text.SimpleDateFormat( 'yyyy-MM-dd HH:mm:ss' );
-                    tz = java.util.TimeZone.getTimeZone ('UTC');
-                    df.setTimeZone( tz );
-                    this.serialDate=datenum(char(df.format(varargin{1})));
+                    %df = java.text.SimpleDateFormat( 'yyyy-MM-dd HH:mm:ss' );
+                    %tz = java.util.TimeZone.getTimeZone ('UTC');
+                    %df.setTimeZone( tz );
+                    %this.serialDate=datenum(char(df.format(varargin{1})));
+                    sec = varargin{1}.getTime/1000;                   
+                    
+                    this.serialDate=datenum(1970,1,1,0,0,sec);
                     %this.serialDate = datenum(char(varargin{1}.toString)) - varargin{1}.getTimezoneOffset/60/24;
                     %disp ( [ char(varargin{1}.toGMTString), '---' char(varargin{1}.toString ), '---', char(varargin{1}.toLocaleString )]);
                     %if (varargin{1}.getTimezoneOffset)~=-120
