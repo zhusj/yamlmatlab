@@ -78,6 +78,8 @@ end
 function result = scan_numeric(r)
     if isempty(r)
         result = java.util.ArrayList();
+    elseif(isinteger(r))
+        result = java.lang.Integer(r);
     else
         result = java.lang.Double(r);
     end
